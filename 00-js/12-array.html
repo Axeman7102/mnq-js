@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数组对象</title>
+</head>
+<body>
+<script type="text/javascript">
+    //Array对象中可以存储任意类型的数据,并且可以动态扩展大小
+    //创建数组对象的几种方式:
+
+    let arr1 = new Array(3);
+
+    let arr2 = new Array("a", "b", "c");
+
+    //通过字面量方式创建
+
+    let arr3 = ["a", "b", "c"];
+
+    //构造函数Array的两个常用的静态方法
+
+    //Array.from() 用于将类数组结构转为数组
+    let arr4 = Array.from("Hello");
+    console.log(arr4);
+
+    let fruits1 = new Map();
+    fruits1.set(1, 2);
+    fruits1.set(2, 3);
+
+    let arr5 = Array.from(fruits1);
+    console.log(arr5);
+
+    let fruits2 = new Set();
+    fruits2.add(6);
+    fruits2.add(7);
+    let arr6 = Array.from(fruits2);
+    console.log(arr6);
+
+    //Array.of() 将传入的参数变为数组
+
+    let arr7 = Array.of("A", "B", "C");
+    console.log(arr7);
+    console.log(arr7.length);
+
+    //数组的迭代器
+
+    let arr8=["A","B","C"];
+
+
+
+</script>
+</body>
+</html>
