@@ -44,7 +44,7 @@
 
     //数组的迭代器
 
-    let arr8=["A","B","C"];
+    let arr8 = ["A", "B", "C"];
 
     console.log("==============");
 
@@ -60,7 +60,87 @@
         console.log(entry);
     });
 
-    
+    /**
+     * 基础语法
+     * javascript
+     * array.reduce((accumulator, currentValue, index, array) => {
+     *   // 返回新的 accumulator
+     * }, initialValue);
+     * accumulator（累加器）：上一次回调执行后返回的值，或是提供的初始值。
+     *
+     * currentValue（当前元素）：数组中正在处理的元素。
+     *
+     * index（索引）（可选）：当前元素的索引。
+     *
+     * array（原数组）（可选）：调用 reduce 的数组本身。
+     *
+     * initialValue（初始值）（可选但极其重要）：第一次调用回调时累加器的值。
+     * **/
+
+    let arr9 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let sum = arr9.reduce((previousValue, currentValue, currentIndex, arr) => {
+        return previousValue + currentValue;
+    }, 0);
+
+    console.log("reduce sum:" + sum);
+
+
+    //js中数组同时也是一个栈结构
+    //push()方法接收任意数量的参数，并将它们添加到数组末尾，返回数组的最新长度。
+    //pop()方法则用于删除数组的最后一项，同时减少数组的length值，返回被删除的项。
+
+    let arr10 = [1, 2, 3, 4, 5];
+    console.log("origin:" + arr10);
+    arr10.push(6);
+    console.log("pushed:" + arr10);
+    arr10.pop();
+    console.log("poped:" + arr10);
+
+    //结合push和shift方法，可以模拟队列数据结构
+    //这个数组方法叫shift()，它会删除数组的第一项并返回它，然后数组长度减1。
+
+    let arr11 = [1, 2, 3, 4, 5];
+    arr11.push(6);
+    arr11.shift();
+    console.log(arr11);
+
+    //sort 和reverse
+
+    let arr12 = [0, 1, 5, 10, 15];
+    console.log("reverse:" + arr12.reverse());
+
+    console.log("sort:" + arr12.sort());//默认按照转字符串后的字母排序来进行排序
+
+    console.log("sort function:" + arr12.sort((a, b) => {
+        return a - b;
+    }));
+
+    //concat 注意是创建了一个新的副本
+    let arr13 = ["apple", "banana", "orange"];
+
+    let arr14 = arr13.concat("xxxxx", ["yyyyy", "zzzzz"]);
+
+    console.log(arr13.toString());
+    console.log(arr14.toString());
+
+    let arr15 = [0, 1, 5, 10, 15];
+
+    console.log("slice:" + arr15.slice(0, 3).toString());
+
+    /*
+    * every()：对数组每一项都运行传入的函数，如果对每一项函数都返回true，则这个方法返回true。
+    * filter()：对数组每一项都运行传入的函数，函数返回true的项会组成数组之后返回。
+    * forEach()：对数组每一项都运行传入的函数，没有返回值。
+    * map()：对数组每一项都运行传入的函数，返回由每次函数调用的结果构成的数组。
+    * some()：对数组每一项都运行传入的函数，如果有一项函数返回true，则这个方法返回true。
+    * */
+
+    let arr16 = [0, 1, 5, 10, 15];
+    let isEveryOdd = arr16.every(value => {
+        return value % 2 === 0;
+    });
+    console.log("isEveryOdd:" + isEveryOdd);
+
 
 </script>
 </body>
