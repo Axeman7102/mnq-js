@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>对象属性访问方式</title>
+</head>
+<body>
+<script type="text/javascript">
+    let person = {name: 'John', age: 18};
+
+    //通过点号访问属性
+    console.log(person.name);
+    console.log(person.age);
+
+    //通过[]访问属性,很灵活
+    let key1 = "name";
+    let key2 = "age";
+    console.log(person[key1]);
+    console.log(person[key2]);
+
+    console.log(person["name"]);
+    console.log(person["age"]);
+</script>
+
+</body>
+</html>

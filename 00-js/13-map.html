@@ -6,11 +6,27 @@
 </head>
 <body>
 <script type="text/javascript">
-
     //大多数Map的特性都可以通过Object来实现
     let map = new Map();
-    map.set("value1","key1").set("key2","value2");
+    map.set("key1", "value1").set("key2", "value2");
     console.log(map);
+
+    console.log(map.get("key1"));
+
+    //entries 迭代
+    map.entries().forEach(entry => {
+        console.log(entry);
+    });
+
+    let set = new Set();
+    set.add("value1");
+    set.add("value2");
+
+    set.values().forEach(entry => {
+        console.log(entry);
+    })
+
+
 </script>
 </body>
 </html>

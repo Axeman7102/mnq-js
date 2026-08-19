@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弱引用</title>
+</head>
+<body>
+<script type="text/javascript">
+    //通过创建WeakRef对象来创建对象的弱引用，通过弱引用对象的deref方法来获取对象（在被垃圾回收后，返回undefined）
+
+    let person = {name: "xiaowei", age: 30};
+
+    let weakRef = new WeakRef(person);
+
+    console.log(weakRef.deref().name);
+    person = null;
+    //这个时机应该出发不了，控制台会阻止js引擎垃圾回收
+    console.log(weakRef.deref());
+
+
+
+</script>
+</body>
+</html>
