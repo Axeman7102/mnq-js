@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>迭代器</title>
+</head>
+<body>
+<script type="text/javascript">
+    let arr = ["foo", "bar"];
+
+    //实现了可迭代协议的数组对象
+    console.log(arr[Symbol.iterator]);
+
+    //获取迭代器
+    let iter = arr[Symbol.iterator]();
+    console.log(iter);
+
+    //迭代其中的元素
+    console.log(iter.next());
+    console.log(iter.next());
+    console.log(iter.next());
+
+    //打印出的元素
+    /*    {value: 'foo', done: false}
+        {value: 'bar', done: false}
+        {value: undefined, done: true}*/
+
+    //自定义迭代器
+
+    class Counter {
+        constructor(limit) {
+            this.limit = limit;
+            this.count = 1;
+        }
+
+        next() {
+            if (this.count <= this.limit) {
+                return {done: false, value: this.count++};
+            } else {
+                return {done: true, value: undefined};
+            }
+        }
+
+        [Symbol.iterator]() {
+            return this;
+        }
+    }
+
+    let counter = new Counter(3);
+    for (let i of counter) {
+        console.log(i);
+    }
+
+    //由于迭代器是对象本身，所以下面循环内的语句不会执行
+    for (let i of counter) {
+        console.log(i);//
+    }
+
+    //采用闭包的写法，每次循环都会生成一个独立的迭代器
+
+    class ClosureCounter{
+        constructor(limit) {
+            this.limit = limit;
+        }
+
+        [Symbol.iterator]() {
+
+        }
+    }
+
+</script>
+</body>
+</html>
