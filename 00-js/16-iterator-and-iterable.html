@@ -58,15 +58,36 @@
 
     //采用闭包的写法，每次循环都会生成一个独立的迭代器
 
-    class ClosureCounter{
+    class ClosureCounter {
         constructor(limit) {
             this.limit = limit;
         }
 
         [Symbol.iterator]() {
-
+            let count = 1, limit = this.limit;
+            return {
+                next() {
+                    if (count <= limit) {
+                        return {done: false, value: count++};
+                    } else {
+                        return {done: true, value: undefined};
+                    }
+                }
+            };
         }
     }
+
+    let cc = new ClosureCounter(3);
+
+    for (let i of cc) {
+        console.log("cc 1 loop:", i);
+    }
+
+    //采用了迭代器对象，每次迭代都是新的迭代器对象，所以可以打印
+    for (let i of cc) {
+        console.log("cc 2 loop:", i);
+    }
+
 
 </script>
 </body>
