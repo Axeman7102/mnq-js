@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>生成器</title>
+</head>
+<body>
+<script type="text/javascript">
+    function* generatorFn() {
+        return "foo";
+    }
+
+    let iter = generatorFn();
+    console.log(iter);
+    console.log(iter.next());
+
+    /*
+    * yield关键字可以让生成器停止和开始执行，也是生成器最有用的特性。
+    * 生成器函数在遇到yield关键字之前会正常执行。遇到这个关键字后，执行会停止
+    * ，函数作用域的状态会被保留。停止执行的生成器函数只能通过在生成器对象上调用
+    * next()方法来恢复执行
+    * 此时的yield关键字有点儿像函数的中间返回语句，它生成的值会出现在next()方法返回的对象里
+    * */
+    function* generatorFn1() {
+        yield "foo";
+        yield "bar";
+        return "foobar";
+    }
+
+    let iter1 = generatorFn1();
+    console.log(iter1.next());
+    console.log(iter1.next());
+    console.log(iter1.next());
+    console.log(iter1.next());
+
+    /*
+    上面的表达式的输出
+    * {value: 'foo', done: false}
+    * {value: 'bar', done: false}
+    * {value: 'foobar', done: true}
+    * {value: undefined, done: true}
+    * */
+
+    //生成器对象作为可迭代对象
+    let iter2 = generatorFn1();
+    for (let i of iter2) {
+        console.log(i);
+    }
+
+    console.log("======================generatorFn3============================");
+
+    //高级内容,通过yield 输入、输出内容
+    function* generatorFn3(initialValue) {
+        console.log(initialValue);
+        console.log(yield);
+        console.log(yield);
+    }
+
+    let iter3 = generatorFn3("foo");
+    iter3.next("bar");//这个next会输出foo，不会输出bar，第一个next是使生成器函数开始执行
+    iter3.next("xxyz");//xxyz
+    iter3.next("wwer");//wwer
+
+    console.log("========================自定义循环次数的生成器==========================");
+
+    //几种形式的生成器
+
+    function* generatorFn4(count) {
+        for (let i = 0; i < count; i++) {
+            yield i;
+        }
+    }
+
+    for (let i of generatorFn4(4)) {
+        console.log(i);
+    }
+
+    function* generatorFn5(count) {
+        while (count--) {
+            yield count;
+        }
+    }
+
+    for (let i of generatorFn5(5)) {
+        console.log(i);
+    }
+
+    generatorFn5(5).forEach(value => console.log(value));
+
+    console.log("========================增强yield==========================");
+
+    //yield *可以迭代一个可迭代对象,生成单个值,yield* 实际上只是将一个可迭代对象序列化为一连串可以单独产出的值，
+    // 所以这跟把yield放到一个循环里没什么不同
+    function* generatorFn6() {
+        yield* [4, 5, 6];
+    }
+
+    for (let i of generatorFn6()) {
+        console.log(i);//456
+    }
+
+    console.log("========================增强yield实现的递归==========================");
+
+    //增强yield可以迭代一个可迭代对象，生成器函数的返回正好是一个可迭代对象，利用这个特性，就可以实现递归，当然正常写递归更容易理解
+
+    function* nTimes(n) {
+        if (n > 0) {
+            yield* nTimes(n - 1);
+            yield n - 1;
+        }
+    }
+
+    for (let i of nTimes(5)) {
+        console.log(i);
+    }
+
+    console.log("========================生成器作为默认迭代器==========================");
+
+    class Foo {
+        constructor() {
+            this.values = [1, 2, 3];
+        }
+
+        * [Symbol.iterator]() {
+            yield* this.values;
+        }
+    }
+
+    let foo = new Foo();
+    for (let i of foo) {
+        console.log(i);
+    }
+</script>
+</body>
+</html>
