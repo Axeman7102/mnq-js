@@ -39,9 +39,27 @@
     foo.name = "hello world!";
     console.log(foo.name);//writable 为false,输出还是earth.
 
+    //访问器属性用于精细控制
 
+    let book = {
+        year_: 2023,
+        edition: 1
+    };
 
+    Object.defineProperty(book, "year_", {
+        get() {
+            return this.year_;
+        },
+        set(newValue) {
+            if (newValue > this.year_) {
+                this.year_ = newValue;
+                this.edition += newValue - 2023;
+            }
+        }
+    });
 
+    book.year = 2024;
+    console.log(book.edition);
 </script>
 </body>
 </html>
