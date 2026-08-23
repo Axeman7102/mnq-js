@@ -30,6 +30,17 @@
     };
 
     person.sayName();
+    //数据属性和访问属性，参考图片note
+
+    console.log("========================数据属性和访问属性==========================");
+    let foo = {};
+    Object.defineProperty(foo, "name", {value: "hello earth!", writable: false});
+    console.log(foo.name);//earth
+    foo.name = "hello world!";
+    console.log(foo.name);//writable 为false,输出还是earth.
+
+
+
 
 </script>
 </body>
