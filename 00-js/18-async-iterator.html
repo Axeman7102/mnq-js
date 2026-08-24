@@ -7,6 +7,46 @@
 <body>
 <script type="text/javascript">
 
+    console.log("======================同步迭代器============================");
+
+    class Foo {
+        constructor(max) {
+            this.max = max;
+            this.syncIdx = 1;
+        }
+
+        * [Symbol.iterator]() {
+            while (this.syncIdx <= this.max) {
+                yield this.syncIdx++;
+            }
+        }
+    }
+
+    //常规遍历
+    // let foo = new Foo(10);
+    // for (let i of foo) {
+    //     console.log(i);
+    // }
+
+    //同步迭代
+    function syncCounter() {
+        let foo = new Foo(10);
+
+        let generator = foo[Symbol.iterator]();
+        for (let i of generator) {
+            console.log(i);
+        }
+
+        //变量是对象级的，不会打印，迭代器无法实际迭代
+        let generator1 = generator[Symbol.iterator]();
+        for (let i of generator1) {
+            console.log(i);
+        }
+    }
+
+    syncCounter();
+
+
 </script>
 </body>
 </html>

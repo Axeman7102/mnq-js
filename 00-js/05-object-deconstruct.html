@@ -6,7 +6,9 @@
 </head>
 <body>
 <script type="text/javascript">
+
     /*对象解构就是使用与对象匹配的结构来实现对象属性赋值*/
+    console.log("======================标准解构============================");
     let person = {
         name: "Wu xiaowei",
         age: 3,
@@ -15,15 +17,19 @@
         }
     };
 
-    /*let {name: personName, age: personAge} = person;
+    let {name: personName, age: personAge} = person;
     console.log(personName);
     console.log(personAge);
 
     // 变量直接使用属性的名称
-    let {name, age} = person;
+    console.log("========================变量直接使用属性的名称==========================");
+    let {name, age, address} = person;
     console.log(name);
     console.log(age);
+    console.log(address);//如果属性不存在，为undefined
 
+
+    console.log("========================声明和解构分开时，结构必须放到一对括号内==========================");
     //声明和解构分开时，结构必须放到一对括号内
     let a, b;
 
@@ -31,17 +37,26 @@
     console.log(a);
     console.log(b);
 
-    //嵌套解构
-    let personCopy = {};
-    /!*({name: personCopy.name, age: personCopy.age, job: personCopy.job} = person);
-    console.log(personCopy);*!/
+    /*
+    * 需要注意的是，涉及多个属性的解构赋值是一个输出无关的顺序化操作。如果一个解构表达式涉及多个赋值，
+    * 开始的赋值成功而后面的赋值出错，则整个解构赋值只会完成一部分
+    * */
 
-    let {name: personName, age: personAge, job: {title: jobTitle}} = person;
-    console.log(personName);
-    console.log(jobTitle);*/
+    //嵌套解构
+    console.log("========================嵌套解构==========================");
+
+    let personCopy = {};
+    ({name: personCopy.name, age: personCopy.age, job: personCopy.job} = person);
+    console.log(personCopy);
+
+    let {name: personNameX, age: personAgeX, job: {title: jobTitleX}} = person;
+    console.log(personNameX);
+    console.log(jobTitleX);
 
     //在函数参数中进行解构
-    /*function print(foo, {name, age}, bar) {
+    console.log("========================在函数参数中进行解构==========================");
+
+    function print(foo, {name, age}, bar) {
         console.log(name, age);
     }
 
@@ -49,11 +64,24 @@
         console.log(personName, personAge);
     }
 
-    print("1st",person,"2nd");
-    print2("1st",person,"2nd");*/
-    // 剩余操作符
-    let {name, ...remainingData} = person;
+    print("1st", person, "2nd");
+    print2("1st", person, "2nd");
+
+    console.log("========================剩余操作符==========================");
+    let {nameY, ...remainingData} = person;
     console.log(remainingData);
+
+
+    console.log("========================扩展操作符==========================");
+    //扩展操作符可以让我们把两个对象以类似数组拼接的方式组合到一起,所有可枚举属性的浅拷贝,注意扩展的顺序
+    let s = Symbol();
+    let foo = {a: 1};
+    let bar = {[s]: 2};
+
+    let foobar = {...foo, c: 3, ...bar}
+    console.log(foobar);//{a: 1, c: 3, Symbol(): 2}
+
+
 </script>
 </body>
 </html>

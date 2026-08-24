@@ -46,7 +46,7 @@
         edition: 1
     };
 
-    Object.defineProperty(book, "year_", {
+    Object.defineProperty(book, "year", {
         get() {
             return this.year_;
         },
@@ -60,6 +60,48 @@
 
     book.year = 2024;
     console.log(book.edition);
+
+    console.log("======================连缀属性============================");
+
+    let person1 = {
+        name: "John",
+        address: {
+            street: "John",
+            city: "He nan",
+        }
+    };
+
+    console.log(person1.address.city);
+    //如果address为空，会报typeErr，检查链中的对象的存在性，代码会变得十分冗杂，可以使用可选连缀操作符
+    //这样如果中间对象不存在会返回undefined或者null
+    console.log(person1.address?.city?.length);
+
+    console.log("======================增强对象语法============================");
+    //1.属性值简写,属性名和变量名一致
+    let name = "john";
+    let p = {
+        name: name
+    };
+    console.log(p.name);
+    //可以简写为
+    let p1 = {name};
+    console.log(p1.name);
+
+    console.log("======================简写方法名============================");
+
+    let person2 = {
+        name: "John",
+        age: 9,
+        job: "Software Engineer",
+        sayName: function () {
+            console.log(this.name);
+        }
+    };
+
+    //正常对象中定义方法，用属性名接上一个匿名函数,简写就采用上面开头的写法
+
+
+
 </script>
 </body>
 </html>
