@@ -6,6 +6,12 @@
 </head>
 <body>
 <script type="text/javascript">
+
+    //虽然可以通过实例读取原型对象上的值，但不可能通过实例重写这些值。
+    //如果在实例上添加了一个与原型对象中同名的属性，那就会在实例上创建这个属性，
+    //这个属性会遮盖原型对象上的同名属性。使用delete操作符可以完全删除实例上的这个属性，
+    //从而让标识符解析过程能够继续搜索原型对象。
+
     let Person = function () {
     }
     Person.prototype.name = "Alice";
@@ -22,6 +28,7 @@
     console.log(person1.name, person1.__proto__.name, person1.constructor.prototype.name);
     console.log(person2.name);
 
+    //通过调用hasOwnProperty()能够清楚地看到访问的是实例属性还是原型属性。
     console.log("person1 has own property 'name':" + person1.hasOwnProperty("name"));
     console.log("person2 has own property 'name':" + person2.hasOwnProperty("name"));
     console.log(person1.hasOwnProperty("constructor"));//false 参考原型链图
@@ -34,13 +41,28 @@
     }
 
     //对象的原型对象在创建对象的时候指定了(通过原型指针),对象并没有直接跟构造函数绑定,
-    //对象的constructor属性是在对象的原型对象中存储的,所以如果对象创建后,修改了[构造函数]指向的
+    //对象的constructor属性是在对象的原型对象中存储的,所以如果对象创建后(这个时候原型对象也创建好了),
+    //修改了[构造函数]指向的
     //原型对象后,原来创建的对象,指向的原型还是原来的.
 
-    let person3=new Person;
+    let person3 = new Person;
     person3.sayHello();//正常实行
     //person1.sayHello();//报错:TypeError: person1.sayHello is not a function. (In 'person1.sayHello()', 'person1.sayHello' is undefined)
 
+
+    //无论属性是在实例上还是在原型上,只要通过实例能访问到,使用in操作符就会返回true
+    console.log("========================in操作符==========================");
+    let Animal = function () {
+    };
+
+    Animal.prototype.name = "Animal";
+    Animal.prototype.age = 15;
+    Animal.prototype.job = "foobar";
+    Animal.prototype.sayHello = function () {
+        console.log(this.name);
+    }
+
+    console.log();
 
 </script>
 </body>
