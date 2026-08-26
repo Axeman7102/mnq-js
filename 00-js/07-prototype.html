@@ -50,7 +50,7 @@
     //person1.sayHello();//报错:TypeError: person1.sayHello is not a function. (In 'person1.sayHello()', 'person1.sayHello' is undefined)
 
 
-    //无论属性是在实例上还是在原型上,只要通过实例能访问到,使用in操作符就会返回true
+    //无论属性是在实例上还是在原型上,只要通过实例能访问到,使用in操作符就会返回true,区别于hasOwnProperty(hasOwn)
     console.log("========================in操作符==========================");
     let Animal = function () {
     };
@@ -62,8 +62,66 @@
         console.log(this.name);
     }
 
-    console.log();
+    let animal1 = new Animal();
+    let animal2 = new Animal();
 
+    console.log("使用in检查name属性：", "name" in animal1);//true
+    console.log("使用hasOwnProperty检查name属性：", animal1.hasOwnProperty("name"));//false
+
+    //结合in和hasOwnProperty可以判断属性是不是在原型上
+    function hasPrototypeProperty(propertyName, obj) {
+        return !obj.hasOwnProperty(propertyName) && (propertyName in obj);//不在实例的属性上，并且能够通过in访问到
+    }
+
+    console.log("checkPropertyPrototype:", hasPrototypeProperty("name", animal1));//true
+    //实例重写属性，把原型属性遮盖住
+    animal2.name = "xxxyyy";
+    console.log("实例重写属性后:", hasPrototypeProperty("name", animal2));
+
+    //属性枚举:Object.keys(obj)返回对象可枚举属性名称字符串数组，注意：仅包含对象上的属性，不包含对象的原型对象上的属性
+
+    console.log("Object keys prototype:", Object.keys(Animal.prototype));
+
+    let animal3 = new Animal();
+    animal3.name = "xxxyyy";
+    animal3.age = 15;
+    console.log("Object keys instance:", Object.keys(animal3));
+
+    //使用getOwnPropertyNames可以列出来所有实例属性，包含不可枚举的属性
+
+    console.log("getOwnPropertyNames:", Object.getOwnPropertyNames(Animal.prototype));//输出会多出一个不可枚举的constructor
+
+    //原生对象的公共方法也是定义在原生对象的原型上的
+    console.log("========================原生对象原型==========================");
+    console.log(typeof Array.prototype.sort);//function
+    console.log(typeof String.prototype.substring);//function
+
+    //可以在原型上增加方法，使得定义出的实例都具有自定义的方法，但是不推荐这样做,容易造成误会，引发命名冲突
+
+    String.prototype.startWith = function (str) {
+        return str.indexOf(str) === 0;
+    }
+
+    let mes = "hello world";
+    console.log(mes.startWith("hello"));
+
+    //任何函数的默认原型都是一个Object的实例，这意味着这个实例有一个内部指针指向Object.prototype
+    //原型链继承的一些问题：
+    function SuperType() {
+        this.colors = ["red", "green", "blue"];
+    }
+
+    function SubType() {
+
+    }
+
+    SubType.prototype = new SuperType();
+    let subType = new SubType();
+    subType.colors.push("yellow");
+
+    let subType2 = new SubType();
+    console.log(subType2.colors);//['red', 'green', 'blue', 'yellow'] colors本来是super实例上的属性，但是被设置为了subtype的原型对象，
+    // 这样subtype所有实例就都共享这个对象了。以上原因导致原型链基本不会被单独使使
 </script>
 </body>
 </html>
