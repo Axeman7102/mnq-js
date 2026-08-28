@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>类继承</title>
+</head>
+<body>
+<script type="text/javascript">
+    class Vehicle {
+        constructor() {
+
+        }
+
+        start() {
+            console.log("vehicle start!");
+        }
+    }
+
+    class Bus extends Vehicle {
+        constructor() {
+            super();//如果子类有构造函数，必须在子类中调用super,如果子类没有构造函数，会隐式调用父类的构造函数。
+            //注意：调用super，会将生成的对象赋值给this,（这样一层一层累计下来），所以在构造函数中，必须先调用super,才能使用this
+        }
+
+        start() {
+            console.log("bus start");
+        }
+    }
+
+    //会呈现出多态
+    let v = new Bus();
+    v.start();//bus start
+
+
+    //抽象类的模拟
+
+    class Animal {
+        constructor() {
+            console.log(new.target);
+            if (new.target === Animal) {
+                throw new Error("Vehicle cannot be instantiated Directly");
+            }
+
+            if (!this.xyz) {//这里可以调用this.xyz参考对象的继承.md解释
+                throw new Error("Inheriting class must implements function xyz");
+            }
+            console.log("success");
+        }
+    }
+
+    class Foo extends Animal {
+        foo() {
+        }
+    }
+
+    class Bar extends Animal {
+
+    }
+
+    //let a=new Animal();//throw new Error("Vehicle cannot be instantiated Directly");
+    let b = new Foo();
+    let c = new Bar();//throw new Error("Inheriting class must implements function xyz");
+</script>
+</body>
+</html>

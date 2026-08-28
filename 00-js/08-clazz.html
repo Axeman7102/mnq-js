@@ -29,34 +29,52 @@
     let animal = new Animal();
     console.log("Animal.prototype", Animal.prototype);
 
+    //一个典型的类定义
     class Person {
         //实例可以在类中快捷定义
         name;
         age;
+        #address;//私有成员
+
+        getAddress() {
+            return this.#address;
+        }
 
         //构造函数,实例字段也可以在构造函数中通过this定义
         constructor(name, age) {
             this.name = name;
             this.age = age;
+            this.#address = "固定的地址";
         }
 
         //类中定义的方法为实例间共享的方法(类的原型上)
         // sayHello = function () {//这种写法是给了一个函数类型的实例属性,不对
         //     console.log("Hello World!");
         // }
-
-        sayHello() {//正确写法
-            console.log("Hello World!");
+        //定义在类原型上的成员
+        sayHello() {
+            console.log("prototype Hello World!");
         }
 
-        //
+        //静态成员，属于类，在静态方法中，this指向类本身
+
+        static foo = 100;
+
+        static sayHello() {
+            console.log("static Hello World!");
+        }
     }
 
     let person1 = new Person("foo", 10);
+
     let person2 = new Person("bar", 20);
     console.log(person1.name, person1.age);
     console.log(person1.sayHello === person2.sayHello);
 
+    console.log(person1["#address"]);//undefined
+    console.log(person1.getAddress());
+
+    Person.sayHello();//static say hello world.
 
 </script>
 </body>
