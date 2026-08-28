@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代理反射</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    let target = {foo: "bar"};
+    let handler = {
+        get(target, property, receiver) {
+            console.log(target[property]);
+            return "handler override";
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+
+    console.log(target.foo);
+    console.log(proxy.foo);
+
+</script>
+</body>
+</html>
