@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Promise</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    console.asyncLog = (...args) => {
+        setTimeout(console.log, 0, ...args);
+    }
+
+    //通过执行器函数控制期约状态
+    let p1 = new Promise((resolve, reject) => {
+        resolve();
+    });
+
+    let p2 = new Promise((resolve, reject) => {
+        reject();
+        resolve();//没有作用,状态转换只有一次
+    })
+
+    console.asyncLog(p1);
+    console.asyncLog(p2);
+
+    let p3 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+    });
+
+    console.asyncLog(p3);//pending
+
+    //Promise.resolve()方法可以将任何非契约活着期约值转换为一个兑换的期约,具有幂等性
+    let p4 = Promise.resolve();
+    let p5 = Promise.resolve(p4);
+    let p6 = Promise.resolve(1);
+
+    console.asyncLog(p4);
+    console.asyncLog(p5);//Promise {status: "fulfilled", result: undefined}
+    console.asyncLog(p6);//Promise {status: "fulfilled", result: 1}
+    console.asyncLog(p4 === p5);//true
+
+    //Promise.reject() 方法不是幂等的,参数会作为期约拒绝的理由
+    let p7 = Promise.reject(1);
+    console.asyncLog(p7);//Promise {status: "rejected", result: 1}
+
+    //访问期约状态,只有通过期约方法
+    console.log("==============期约实例方法 then()================")
+    let p8 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000);
+    });
+    let p9 = new Promise((resolve, reject) => {
+        setTimeout(reject, 3000);
+    });
+
+    //then()方法最多接收两个参数：onFulfilled处理程序和onRejected处理程序,所有的实例方法都
+    // 会再返回一个新的期约对象,
+    //这个新期约实例基于onFulfilled处理程序的返回值构建。换句话说，该处理程序
+    // 的返回值会通过Promise.resolve()包装来生成新期约。如果没有提供这个处理程
+    // 序，则Promise.resolve()就会包装上一个期约兑现之后的值。如果没有显式的返回
+    // 语句，则Promise.resolve()会包装默认的返回值undefined。
+    function onFulfilled(id) {
+        console.asyncLog(id, "onFulfilled");
+    }
+
+    function onRejected(id) {
+        console.asyncLog(id, "onRejected");
+    }
+
+    p8.then(() => onFulfilled("p8"), () => onRejected("p8"));
+    p9.then(() => onFulfilled("p9"), () => onRejected("p9"));
+
+    //catch() 单独添加期约拒绝处理程序,是p.then(undefined,onReject())的语法糖
+    let p10 = new Promise((resolve, reject) => {
+        setTimeout(reject, 3000);
+    });
+
+    p10.catch(() => onRejected("p10"));
+
+    //如果给期约添加了多个处理程序，当期约状态变化时，相关处理程序会按照添加它们的顺序依次执行。
+    // 无论then()、catch()还是finally()添加的处理程序都是如此。
+
+    //兑现的值和拒绝的理由是分别作为resolve()和reject()的第一个参数往后传递的。
+    // 然后，这些值又会传给它们各自的处理程序，作为onFulfilled或onRejected处理程序的唯一参数
+    let p11 = new Promise((resolve, reject) => {
+        resolve("foo");
+    });
+
+    p11.then((value) => {
+        console.asyncLog(value, "p11");//foo
+    });
+
+    let p12 = new Promise((resolve, reject) => {
+        reject("bar");
+    });
+
+    p12.catch((reason) => {
+        console.asyncLog(reason, "p12");//bar
+    });
+
+    //拒绝期约和拒绝错误处理,在期约执行器或者处理函数中抛出异常,会导致期约被拒绝,当然,直接reject会拒绝.
+    let p13 = new Promise((resolve, reject) => {
+        throw Error("foo");
+    });
+
+    let p14 = new Promise((resolve, reject) => {
+        reject(Error("foo"))
+    });
+
+    let p15 = Promise.resolve().then(() => {
+        throw Error("foo");
+    });
+    let p16 = Promise.reject(Error("foo"));
+
+    console.asyncLog(p13);
+    console.asyncLog(p14);
+    console.asyncLog(p15);
+    console.asyncLog(p16);
+
+    //以上代码会有4个未捕获异常
+
+    //期约连锁:期约实例函数then/catch/finally会返回一个新的期约,新的期约又有处理函数,可以形成期约连锁
+
+</script>
+</body>
+</html>

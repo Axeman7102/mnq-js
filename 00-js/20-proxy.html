@@ -15,10 +15,32 @@
         }
     };
 
-    let proxy = new Proxy(target, handler);
+    let proxyForTarget = new Proxy(target, handler);
 
-    console.log(target.foo);
-    console.log(proxy.foo);
+    console.log(proxyForTarget.foo);
+    console.log(proxyForTarget.foo);
+
+    //正常情困过不通这种方式去原对象调用,通过ReflectAPI进行调用
+
+    let a = {foo: "bar", name: "wuxiaowei"};
+    let handlerForA = {
+        get(target, property, receiver) {
+            let decoration = "";
+            if (property === "name") {
+                decoration = " NB!!!";
+            }
+            return Reflect.get(...arguments) + decoration;
+        }
+    };
+
+    let aProxy = new Proxy(a, handlerForA);
+    console.log("aProxy:", aProxy.foo);
+    console.log("aProxy.name:", aProxy.name);
+
+    let {proxy: proxyForA, revoke} = Proxy.revocable(a, handlerForA);
+    console.log(proxyForA.name);
+    revoke();
+    //console.log(proxyForA.name);//TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it
 
 </script>
 </body>
