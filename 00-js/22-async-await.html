@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>异步方法</title>
+</head>
+<body>
+<script type="text/javascript">
+    //async/await 是建立在 Promise 之上的，它并没有创造新的异步机制，而是改变了我们编写和阅读异步代码的方式。
+    //async 用于声明一个异步函数，该函数必定返回一个 Promise
+    //await 用于暂停 async 函数的执行，等待一个 Promise 决议（resolve），然后获取其值
+
+    /*1. 遇到 await → 将 await 后面的表达式求值为 Promise
+    2. 如果该 Promise 未决议 → 将 async 函数的剩余部分注册为 .then() 回调
+    3. 当前 async 函数暂停，控制权交还给调用者
+    4. Promise 决议后 → 剩余代码作为微任务进入微任务队列
+    5. 微任务队列轮到时 → 继续执行 await 之后的代码*/
+
+    // 1. 返回普通值 → 自动包装为 fulfilled Promise
+    async function f1() {
+        return 'hello';
+    }
+
+    f1().then(v => console.log(v)); // 'hello'
+
+    // 2. 返回 Promise → 直接透传该 Promise
+    async function f2() {
+        return Promise.resolve('world');
+    }
+
+    f2().then(v => console.log(v)); // 'world'
+
+    // 3. 抛出异常 → 返回 rejected Promise
+    async function f3() {
+        throw new Error('boom');
+    }
+
+    f3().catch(e => console.log(e.message)); // 'boom'
+
+    /*
+    // 情况1：await 后面是 Promise
+    // → 暂停执行，等 Promise resolve 后返回 resolved 的值
+    const value = await somePromise;
+
+    // 情况2：await 后面是普通值
+    // → 等价于 await Promise.resolve(普通值)，直接返回该值
+    const num = await 42; // num === 42
+     */
+
+    //执行暂停和恢复
+    //await 暂停的只是 async 函数内部的后续代码，不会阻塞整个程序。await 之后的代码会被放入微任务队列，等当前同步代码和已有微任务执行完毕后才继续。
+    async function demo() {
+        console.log("A");
+        const result = await new Promise(resolve => setTimeout(() => resolve("B"), 1000));
+        console.log(result);
+        console.log("C");
+    }
+
+    demo();
+    console.log("D");
+
+    //以上打印 A D （中间隔一秒）B C
+
+
+</script>
+</body>
+</html>

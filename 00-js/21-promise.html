@@ -121,6 +121,37 @@
 
     //期约连锁:期约实例函数then/catch/finally会返回一个新的期约,新的期约又有处理函数,可以形成期约连锁
 
+    //下面的任务会隔一秒打印一个
+    let p17 = new Promise((resolve, reject) => {
+        console.log("p17 executor");
+        setTimeout(resolve, 1000);
+    });
+
+    p17.then(() => new Promise((resolve, reject) => {
+        console.log("p18 executor");
+        setTimeout(resolve, 1000);
+    })).then(() => new Promise((resolve, reject) => {
+        console.log("p19 executor");
+        setTimeout(resolve, 1000);
+    })).then(() => new Promise((resolve, reject) => {
+        console.log("p20 executor");
+        setTimeout(resolve, 1000);
+    }));
+
+    //Promise.all() 接收一个可迭代期约组，返回一个新的期约，这个新的期约，会在所有内部的期约兑现之后兑现。
+    //如果有一个期约拒绝了，那么新的期约也会拒绝
+    //Promise.allSettled()方法和all类似，但只要求所有期约都是到兑现或者是拒绝的状态
+
+    let p21 = Promise.all(
+        [Promise.resolve(),
+            new Promise((resolve, reject) => {
+                setTimeout(resolve, 1000);
+            })]);
+    p21.then(() => {
+        console.asyncLog("all promises resolved!");
+    });
+
+
 </script>
 </body>
 </html>
