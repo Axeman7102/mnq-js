@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dom2-遍历节点</title>
+</head>
+<body>
+<!-- 待遍历的 DOM 结构 -->
+<div id="root" class="container">
+    <h2>文章标题</h2>
+    <p class="content">这是第一段<strong>重要</strong>内容。</p>
+    <!-- 这是一个注释节点 -->
+    <ul>
+        <li>列表项 1</li>
+        <li class="special">列表项 2 (special)</li>
+        <li>列表项 3</li>
+    </ul>
+    <p class="content">这是第二段内容。</p>
+</div>
+
+<script type="text/javascript">
+
+    //通过NodeIterator遍历(深度优先、线性)
+    let root = document.getElementById("root");
+
+    class MyNodeFilter {
+        acceptNode(node) {
+            return node.nodeType === Node.TEXT_NODE ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        }
+    }
+
+    let iter = document.createNodeIterator(root, NodeFilter.SHOW_ALL, new MyNodeFilter());
+
+    let node = null;
+    let count = 0;
+    while ((node = iter.nextNode())) {
+        count++;
+        console.log(node);
+    }
+    console.log(count);
+
+    //通过Tree，非线性的，有多种获取相关内部节点的属性
+    const filter = {
+        // acceptNode(node) {
+        //     if (node.nodeType !== Node.ELEMENT_NODE) return NodeFilter.FILTER_SKIP;
+        //     // 接受 p.content 或其祖先/后代中的元素
+        //     if (node.matches('p.content') || node.closest('p.content')) {
+        //         return NodeFilter.FILTER_ACCEPT;
+        //     }
+        //     return NodeFilter.FILTER_SKIP;
+        // }
+
+        acceptNode: (node) => {
+            if (node.nodeType !== Node.ELEMENT_NODE) return NodeFilter.FILTER_SKIP;
+            // 接受 p.content 或其祖先/后代中的元素
+            if (node.matches('p.content') || node.closest('p.content')) {
+                return NodeFilter.FILTER_ACCEPT;
+            }
+            return NodeFilter.FILTER_SKIP;
+        }
+    }
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter);
+    console.log("first child:", walker.firstChild());
+    let walkerNode = null;
+    while ((walkerNode = walker.nextNode())) {
+        console.log(walkerNode);
+    }
+
+
+</script>
+</body>
+</html>

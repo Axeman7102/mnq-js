@@ -5,16 +5,47 @@
     <title>异步方法</title>
 </head>
 <body>
+
+<!--
+
+// 你写的 async/await
+async function demo() {
+  const a = await fetchA();      // ← await 1
+  console.log(a);                // ─┐
+  const b = await fetchB(a);     // ←┤ await 2
+  console.log(b);                // ─┤
+  return b;                      // ─┘
+}
+
+
+// 引擎实际执行的等价代码
+function demo() {
+  return fetchA().then(a => {           // await 1 的后续代码 → 第1个 .then()
+    console.log(a);
+    return fetchB(a);                   // 遇到 await 2，返回新 Promise
+  }).then(b => {                        // await 2 的后续代码 → 第2个 .then()
+    console.log(b);
+    return b;                           // 最终返回值
+  });
+}
+
+
+-->
+
+-->
+
 <script type="text/javascript">
     //async/await 是建立在 Promise 之上的，它并没有创造新的异步机制，而是改变了我们编写和阅读异步代码的方式。
     //async 用于声明一个异步函数，该函数必定返回一个 Promise
     //await 用于暂停 async 函数的执行，等待一个 Promise 决议（resolve），然后获取其值
 
-    /*1. 遇到 await → 将 await 后面的表达式求值为 Promise
+    /*
+    1. 遇到 await → 将 await 后面的表达式求值为 Promise
     2. 如果该 Promise 未决议 → 将 async 函数的剩余部分注册为 .then() 回调
     3. 当前 async 函数暂停，控制权交还给调用者
     4. Promise 决议后 → 剩余代码作为微任务进入微任务队列
-    5. 微任务队列轮到时 → 继续执行 await 之后的代码*/
+    5. 微任务队列轮到时 → 继续执行 await 之后的代码
+    */
 
     // 1. 返回普通值 → 自动包装为 fulfilled Promise
     async function f1() {

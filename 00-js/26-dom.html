@@ -1,0 +1,47 @@
+<html lang="cn">
+<head>
+    <title>Sample Page</title>
+
+</head>
+<body>
+<p>Hello World!</p>
+<fieldset>
+    <legend>Which color do you prefer?</legend>
+    <ul>
+        <li>
+            <input type="radio" value="red" name="color" id="colorRed">
+            <label for="colorRed">Red</label>
+        </li>
+        <li>
+            <input type="radio" value="green" name="color" id="colorGreen">
+            <label for="colorGreen">Green</label>
+        </li>
+        <li>
+            <input type="radio" value="blue" name="color" id="colorBlue">
+            <label for="colorBlue">Blue</label>
+        </li>
+    </ul>
+</fieldset>
+<script type="text/javascript">
+
+    /*DOM Level 1描述了名为Node的接口，这个接口是所有DOM节点类型都必须实现的。Node接口在JavaScript中被实现为Node类型，
+所有浏览器中都可以直接访问这个类型。在JavaScript中，所有节点类型都继承Node类型，因此所有类型都共享相同的基本属性和方法。*/
+
+    //document 类型节点
+    console.log(document.URL)
+    console.log(document.referrer)
+    console.log(document.title)
+    console.log(document.domain)
+
+    //定位元素
+    console.log(document.location)
+    console.log(document.getElementById("colorBlue"))
+    //返回元素集合 HTMLCollection对象
+    console.log(document.getElementsByTagName("input"))
+
+
+    //element 类型的节点
+    
+</script>
+</body>
+</html>

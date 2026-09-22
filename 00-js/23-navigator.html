@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navigator</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    function getAllNavigatorProps(nav = navigator) {
+        const result = {};
+        // 遍历自身及所有原型层级的属性（包括不可枚举和 Symbol）
+        let current = nav;
+        while (current && current !== Object.prototype) {
+            for (const key of Reflect.ownKeys(current)) {
+                if (!(key in result)) {
+                    try {
+                        // ⚠️ 某些属性访问会抛异常或触发安全警告，必须 try-catch
+                        result[key] = nav[key];
+                    } catch (e) {
+                        result[key] = `[Access Error: ${e.message}]`;
+                    }
+                }
+            }
+            current = Object.getPrototypeOf(current);
+        }
+        return result;
+    }
+
+    // 使用
+    const props = getAllNavigatorProps();
+    for (const [key, value] of Object.entries(props)) {
+        console.log(`${key}:`, value);
+    }
+</script>
+</body>
+</html>

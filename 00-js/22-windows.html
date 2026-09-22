@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Window对象</title>
+</head>
+<body>
+<script type="text/javascript">
+    let wileyWin = window.open("http://www.wiley.com/",
+        "wileyWindow",
+        "height=400,width=400,top=10,left=500,resizable=yes");
+
+    // 缩放
+    wileyWin.resizeTo(500, 500);
+
+    // 移动
+    wileyWin.moveTo(100, 500);
+
+    console.log(wileyWin.opener === window);
+
+</script>
+</body>
+</html>

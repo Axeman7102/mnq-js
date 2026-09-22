@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timer</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    // JavaScript是单线程的，所以每次只能执行一段代码。为了调度不同代码的执行，JavaScript维护了一个任务队列，
+    // 其中的任务会按照添加到队列的先后顺序执行。setTimeout()
+    // 的第二个参数只是告诉JavaScript引擎在指定的毫秒数过后把任务添加到这个队列。
+    // 如果队列是空的，则会立即执行该代码。如果队列不是空的，则代码必须等待前面的任务执行完才能执行。
+
+    let num = 0, intervalId = null;
+    let max = 10;
+
+    function incrementNum() {
+        num++;
+        console.log(String(num));
+        if (num === max) {
+            clearInterval(intervalId);
+        }
+    }
+
+    //取消定时，循环十次就不会再输出了
+    intervalId = setInterval(incrementNum, 1000);
+</script>
+</body>
+</html>

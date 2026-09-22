@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Element 节点操作 Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #4a90d9;
+            color: #fff;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        button.success {
+            background: #27ae60;
+        }
+
+        .item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #ecf0f1;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .highlight {
+            border: 2px solid #e74c3c;
+            background: #ffeaea !important;
+        }
+
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #2c3e50;
+            color: #2ecc71;
+            font-family: monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📌 HTML Element 节点操作演示</h2>
+
+    <!-- 操作按钮区 -->
+    <div style="margin-bottom: 15px;">
+        <button onclick="createAppElement()">➕ 创建并追加元素</button>
+        <button onclick="insertAppBefore()">⬆️ 在指定位置插入</button>
+        <button onclick="replaceElement()">🔄 替换第一个元素</button>
+        <button class="danger" onclick="removeElement()">❌ 删除最后一个元素</button>
+        <button class="success" onclick="modifyAttrAndStyle()">🎨 修改属性与样式</button>
+        <button onclick="traverseNodes()">🔍 遍历子节点</button>
+    </div>
+
+    <!-- 目标容器 -->
+    <div id="list-container">
+        <div class="item" data-id="1">项目 1 <small>(原始)</small></div>
+        <div class="item" data-id="2">项目 2 <small>(原始)</small></div>
+        <div class="item" data-id="3">项目 3 <small>(原始)</small></div>
+    </div>
+
+    <!-- 操作日志 -->
+    <div id="log">👉 点击按钮查看操作日志...</div>
+</div>
+
+<script>
+    const container = document.getElementById('list-container');
+    const logBox = document.getElementById('log');
+    let counter = 3;
+
+    // 工具函数：打印日志
+    function log(msg) {
+        const time = new Date().toLocaleTimeString();
+        logBox.textContent += `\n[${time}] ${msg}`;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    // ========== 1. 创建 & 追加元素 ==========
+    function createAppElement() {
+        counter++;
+        // 创建新元素
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.setAttribute('data-id', counter);
+        div.innerHTML = `项目 ${counter} <small>(动态创建)</small>`;
+
+        // 追加到容器末尾
+        container.appendChild(div);
+        log(`✅ appendChild: 创建了 "项目 ${counter}" 并追加到末尾`);
+    }
+
+    // ========== 2. 在指定位置插入 ==========
+    function insertAppBefore() {
+        counter++;
+        const div = document.createElement('div');
+        div.className = 'item highlight';
+        div.textContent = `⭐ 插入的项目 ${counter}`;
+
+        // 获取第一个子元素作为参照
+        const firstChild = container.firstElementChild;
+        if (firstChild) {
+            // 在第一个元素之前插入
+            container.insertBefore(div, firstChild);
+            log(`✅ insertBefore: 在第一个元素前插入了 "项目 ${counter}"`);
+        } else {
+            container.appendChild(div);
+            log(`⚠️ 容器为空，改为 appendChild`);
+        }
+    }
+
+    // ========== 3. 替换元素 ==========
+    function replaceElement() {
+        const firstChild = container.firstElementChild;
+        if (!firstChild) return log('⚠️ 没有可替换的元素');
+
+        const newDiv = document.createElement('div');
+        newDiv.className = 'item highlight';
+        newDiv.textContent = '🆕 替换后的新元素';
+
+        // 替换旧节点
+        container.replaceChild(newDiv, firstChild);
+        log(`✅ replaceChild: 第一个元素已被替换`);
+    }
+
+    // ========== 4. 删除元素 ==========
+    function removeElement() {
+        const lastChild = container.lastElementChild;
+        if (!lastChild) return log('⚠️ 没有可删除的元素');
+
+        // 方式一：父节点.removeChild()
+        // container.removeChild(lastChild);
+
+        // 方式二（推荐）：元素自身.remove()
+        lastChild.remove();
+        log(`❌ remove: 删除了最后一个元素 "${lastChild.textContent.trim()}"`);
+    }
+
+    // ========== 5. 修改属性 & 样式 & 内容 ==========
+    function modifyAttrAndStyle() {
+        const first = container.firstElementChild;
+        if (!first) return log('⚠️ 没有可操作的元素');
+
+        // 修改文本内容
+        first.textContent = '✏️ 内容已被修改';
+
+        // 修改/设置属性
+        first.setAttribute('data-modified', 'true');
+        first.id = 'modified-item';
+
+        // 操作 classList（推荐方式）
+        first.classList.add('highlight');
+        first.classList.toggle('item'); // 移除 item 类
+
+        // 直接修改内联样式
+        first.style.padding = '15px';
+        first.style.fontWeight = 'bold';
+
+        // 读取属性
+        const dataId = first.getAttribute('data-id');
+        log(`🎨 修改完成 | data-id="${dataId}" | classList: [${first.className}]`);
+    }
+
+    // ========== 6. 遍历子节点 ==========
+    function traverseNodes() {
+        // ⚡ children 只返回 Element 节点（推荐）
+        // childNodes 会包含文本节点、注释节点等
+        const items = container.children;
+
+        let info = `🔍 共 ${items.length} 个Element子节点:\n`;
+        Array.from(items).forEach((el, index) => {
+            info += `  [${index}] tagName=${el.tagName}, data-id=${el.getAttribute('data-id')}\n`;
+        });
+        log(info.trim());
+    }
+</script>
+
+</body>
+</html>

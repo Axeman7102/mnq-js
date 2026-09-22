@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Observer-MutationObserver</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 24px;
+            line-height: 1.6;
+        }
+
+        button {
+            margin: 0 6px 6px 0;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        #target {
+            margin: 16px 0;
+            padding: 16px;
+            border: 2px dashed #4a90d9;
+            border-radius: 8px;
+            min-height: 60px;
+            background: #f5faff;
+            transition: background .3s;
+        }
+
+        #target.highlight {
+            background: #fff4d6;
+            border-color: #e8a33d;
+        }
+
+        .child {
+            display: inline-block;
+            margin: 4px;
+            padding: 4px 10px;
+            background: #4a90d9;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 8px;
+            max-height: 320px;
+            overflow: auto;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<!--Observer API 是浏览器提供的一组原生接口，用于异步观察页面中特定目标的变化。
+它解决了传统方案（如监听 scroll/resize 事件或轮询）性能开销大、精度不足的问题
+
+通用使用模式：
+// 1. 创建观察者，传入回调函数
+const observer = new SomeObserver(callback, options);
+
+// 2. 定义回调，处理变化记录
+function callback(entries, observer) {
+  entries.forEach(entry => {
+    // 根据 entry 中的信息执行操作
+  });
+}
+
+// 3. 开始观察目标
+observer.observe(target);
+
+// 4. （可选）停止观察
+observer.unobserve(target);   // 停止观察特定目标
+observer.disconnect();        // 停止所有观察
+
+-->
+<div>
+    <button id="addChild">添加子节点</button>
+    <button id="removeChild">删除一个子节点</button>
+    <button id="toggleClass">切换 class 属性</button>
+    <button id="changeText">修改文本内容</button>
+</div>
+
+<div id="target">我是被观察的容器（原始文本）</div>
+
+<pre id="log">// 变化日志</pre>
+<script type="text/javascript">
+    const target = document.getElementById('target');
+    const logEl = document.getElementById('log');
+    let counter = 0;
+
+    function log(msg) {
+        logEl.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n` + logEl.textContent;
+    }
+
+    document.getElementById("addChild").onclick = function () {
+        const span = document.createElement('span');
+        span.className = 'child';
+        span.textContent = '子节点 ' + (++counter);
+        target.appendChild(span);
+    };
+
+    document.getElementById("removeChild").onclick = function () {
+        let children = target.querySelectorAll(".child");
+        if (children.length) {
+            target.removeChild(children[children.length - 1]);
+        } else {
+            log("没有可删除的子节点")
+        }
+    };
+
+    document.getElementById('toggleClass').onclick = () => {
+        target.classList.toggle('highlight');
+    };
+
+    document.getElementById('changeText').onclick = () => {
+        // 必须直接改文本节点的 data，才会触发 characterData；
+        // 用 textContent = ... 会替换整个子节点，触发的是 childList
+        const textNode = Array.from(target.childNodes)
+            .find(n => n.nodeType === Node.TEXT_NODE);
+        if (textNode) {
+            textNode.data = '文本已被修改 ' + Date.now();
+        } else {
+            log('找不到文本节点（可能已被删除）');
+        }
+    };
+
+    /* 1. 创建观察者 */
+    const observer = new MutationObserver((mutations) => {
+        // mutations 是一批 MutationRecord
+        mutations.forEach(m => {
+            let msg = `type=${m.type} `;
+            switch (m.type) {
+                case 'childList':
+                    msg += `target=<${m.target.id || m.target.nodeName}> ` +
+                        `新增 ${m.addedNodes.length} 个 / 删除 ${m.removedNodes.length} 个节点`;
+                    break;
+                case 'attributes':
+                    msg += `target=<${m.target.id}> 属性 "${m.attributeName}" ` +
+                        `旧值="${m.oldValue}" 新值="${m.target.getAttribute(m.attributeName)}"`;
+                    break;
+                case 'characterData':
+                    msg += `旧文本="${m.oldValue}" → 新文本="${m.target.data}"`;
+                    break;
+            }
+            log(msg);
+        });
+    });
+
+    /* 2. 开始观察 */
+    observer.observe(target, {
+        childList: true,             // 子节点的增删
+        attributes: true,            // 属性变化
+        attributeOldValue: true,     // 记录属性旧值
+        characterData: true,         // 文本节点内容变化
+        characterDataOldValue: true, // 记录文本旧值
+        subtree: true                // 观察所有后代
+    });
+
+</script>
+</body>
+</html>
