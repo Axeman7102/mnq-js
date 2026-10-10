@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS中的异步</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    const myPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            console.log("1秒后异步执行");
+            resolve();
+        }, 1000);
+    });
+
+    myPromise.then(() => {
+        console.log()
+    });
+
+
+
+</script>
+</body>
+</html>
