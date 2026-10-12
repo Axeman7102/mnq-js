@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    /*
+    * 一个Promise代表一个未来的值，有三种状态:
+    * 1.pending 初始化，待执行状态;
+    * 2.fulfilled 已成功，表明异步任务按照预期执行了，配套带一个value，代表最终的结果值。
+    * 3.rejected 已失败，表明发生异常等异步任务没有按照预期去执行或拿到预期的结果，配套带一个reason，代表失败的原因。
+    *
+    * 构造函数接收resolve和reject两个函数，分别代表着把Promise置为成功或者失败，注意这个操作是幂等的，意味着从pending置成一个状态后，不能再变成其他状态。
+    *
+    * resolve(value) 中参数可以带上述value
+    * reject(reason) 中参数可以带上述reason
+    * */
+    const p = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(5)
+        }, 1000)
+    })
+
+    p.then((value) => {
+        console.log(value)//5
+    })
+
+    /*
+    * then / catch / finally
+    *
+    * then 总是返回一个新的 Promise，这是链式调用的根基，注意 then的参数有两个 then(onFulfilled,onReject),其中两个函数分别
+    * 对应成功或者失败的回调,参数分别对应Promise定义中的异步任务调用resolve和reject时的参数，注意catch(onReject) 其实是另外一种reject回调的写法
+    *
+    * catch(fn) 等价于 then(undefined, fn)
+    *
+    * finally 不接收参数，也不改变链的值，一般意义上的finally处理
+    *
+    * 根据上面讲的，then的参数是两个回调参数，但是实际上一次执行只会调用一个回调函数（对应Promise的幂等回调），then执行完之后，返回的新的Promise
+    * 取决于回调函数中的返回值，具体规则：
+    * 1.return 普通值，状态为fulfilled，值为该值（值穿透）
+    * 2.return 另一个 Promise，下游“跟随”这个 Promise 的状态
+    * 3.throw 错误，状态rejected，reason的值为为该错误
+    * 4.什么都不 return（即 `undefined`），状态为fulfilled，值为 'undefined'
+    * */
+
+    const errPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject("发生了异常")
+        }, 1000)
+    })
+
+    errPromise.then((value) => {
+        console.log(`异步任务执行成功，结果: ${value}`)
+    }).catch((err) => {
+        console.log(`异步任务执行失败，原因: ${err}`)
+    })
+
+
+
+</script>
+</body>
+</html>
