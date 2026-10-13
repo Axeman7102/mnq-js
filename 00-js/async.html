@@ -39,7 +39,7 @@
     * finally 不接收参数，也不改变链的值，一般意义上的finally处理
     *
     * 根据上面讲的，then的参数是两个回调参数，但是实际上一次执行只会调用一个回调函数（对应Promise的幂等回调），then执行完之后，返回的新的Promise
-    * 取决于回调函数中的返回值，具体规则：
+    * 取决于回调函数中的返回值，注意：在then的回调函数中返回的Promise是有一个具体的状态的，具体规则：
     * 1.return 普通值，状态为fulfilled，值为该值（值穿透）
     * 2.return 另一个 Promise，下游“跟随”这个 Promise 的状态
     * 3.throw 错误，状态rejected，reason的值为为该错误
@@ -58,7 +58,31 @@
         console.log(`异步任务执行失败，原因: ${err}`)
     })
 
+    //模拟几个返回场景
+    const fPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(1)
+        }, 1000)
+    })
 
+    fPromise.then((value) => {
+        console.log('fPromise', value)
+        return 100
+    }).then((value) => {
+        console.log('fPromise', value)//这个value，是上个then生成的Promise 执行后的值 100
+        return Promise.resolve(200)//这个回调中返回一个指定的Promise，这个Promise就是调用then后会生成的Promise
+    }).then(value => {
+        console.log('fPromise', value)//200,这个回调中，不返回值，则生成的Promise fulfilled 值为 'undefined'
+    }).then(value => {
+        console.log('fPromise', value)//undefined
+        throw Error("like you!")
+    }).catch((err) => {
+        console.log('fPromise', err)//"like you!"
+    })
+
+    /*
+    *
+    * */
 
 </script>
 </body>
