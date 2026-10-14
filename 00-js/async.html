@@ -17,6 +17,8 @@
     *
     * resolve(value) 中参数可以带上述value
     * reject(reason) 中参数可以带上述reason
+    *
+    * 另外一层理解：将耗时的操作放入到Promise的构造中，在耗时操作完成后，调用resolve或者reject来通知外部then或者catch的回调
     * */
     const p = new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -81,8 +83,53 @@
     })
 
     /*
-    *
+    * 上面使用then的链式调用中，能够顺利往下执行，有一个核心的原则：如果 then 没有提供对应状态的处理器，
+    * 新 Promise 就原样继承上游的状态和值，这就是状态穿透，then中的两个回调的函数，其实就是针对两种状态
+    * 的处理回调，如果上一个状态没能够得到处理，会顺序传递到下面，这也是为什么catch在最后，也能成功使用
+    * 回调函数处理异常。
     * */
+
+    /*
+    * async+await的Promise语法糖：
+    * async 函数永远返回 Promise。return 1 等价于 return Promise.resolve(1)；内部抛错等价于返回被 reject 的 Promise。
+    * await 只能在 async 函数体内使用（ES Module 支持顶层 await，CommonJS 不行）。
+    * await 会暂停当前 async 函数，但不阻塞主线程。函数执行到 await 时交出控制权，Promise settled 后剩余代码作为微任务恢复执行。
+    *
+    * 每个 await 都是一个断点，断点后面的代码会被挂到对应 Promise 的后续处理里,这样使用await书写的代码就能对应到上面的then链式的形式上
+    * 这意味着await有两层处理(使用await的作用就是将其后的代码包装成一个Promise)：
+    * await 右边的值如果不是 Promise，会被 Promise.resolve() 包装；注意下面的例子api返回的是一个Promise类型的对象
+    * await 后面的代码会被包装成这个 Promise 的 .then 回调，也就是微任务。
+    * */
+
+    //api定义为返回一个间隔一定事件输出任务名的Promise，可通过参数控制Promise最终的成功或失败
+    const api = (name, ms, fail = false) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                (fail ? reject(new Error(`${name} 挂了`)) : resolve(`${name}:${ms}`))
+            }, ms)
+        })
+    }
+
+    async function fetchInfo() {
+        const a = await api("A", 2000)
+        const b = await api("B", 3000)
+        return {a, b}
+    }
+
+    fetchInfo().then(res => {
+        console.log(res)//会等待五秒后返回一个对象 {a: 'A:2000', b: 'B:3000'}
+    })
+
+    //一些组合的场景，Promise.all(iterable),方法接收一个可迭代的参数，
+    // 核心：通常是数组，元素如果是Promise，不进行转换，元素如果不是Promise,值会被当作 Promise.resolve(value) 处理，
+    // 直接出现在结果数组中。注意以上，再需要进行Promise转换的时候，then、await也是同样的转换道理。
+    // 语义：所有 Promise 都 fulfilled → （注意）返回值也是一个Promise，value为：resolve 结果数组；任一 rejected → 立即 reject（第一个错误），注意，reject之后，其他的
+    // Promise仍然会执行，只是结果不会再被接收了，也不会处理。
+
+    const pAll = Promise.all([api("A", 2000), api("B", 3000)])
+    pAll.then(res => console.log(res))//由于是并发的,三秒可完成
+
+
 
 </script>
 </body>
